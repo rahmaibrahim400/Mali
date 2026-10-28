@@ -1,0 +1,543 @@
+@import "tailwindcss";
+
+/*
+  Two themes, switched by <html data-theme> (see utils/theme.js):
+  - "mali" (default): slate gray brand, orange accent, Inter, white sidebar.
+  - "emerald": emerald green brand, indigo accent, Plus Jakarta Sans, dark navy sidebar.
+  Colors are CSS variables, so the [data-theme="emerald"] block below swaps them at runtime.
+  Where the two designs differ beyond color (the sidebar, hero cards), components add
+  `emerald:` classes on top of the Mali ones.
+*/
+@custom-variant emerald (&:where([data-theme="emerald"], [data-theme="emerald"] *));
+
+@theme {
+  /* English/Latin text uses Inter; Arabic text uses Cairo
+     (applied below via html[lang="ar"], since the two scripts don't share one family). */
+  --font-sans: "Inter", "Cairo", "Segoe UI", sans-serif;
+
+  /* Primary brand color is slate gray. */
+  --color-brand-50: #f8fafc;
+  --color-brand-100: #f1f5f9;
+  --color-brand-200: #e2e8f0;
+  --color-brand-300: #cbd5e1;
+  --color-brand-400: #94a3b8;
+  --color-brand-500: #64748b;
+  --color-brand-600: #334155;
+  --color-brand-700: #1e293b;
+  --color-brand-800: #0f172a;
+  --color-brand-900: #0f172a;
+
+  /* Deep blue #03346E: the logo color, also used for the icon on orange fills. */
+  --color-navy: #03346e;
+
+  /* Emerald theme only: deep slate navy for the sidebar and dark hero cards. */
+  --color-navy-700: #2a3748;
+  --color-navy-800: #1e2a38;
+  --color-navy-900: #151f2b;
+
+  /* Accent: orange #FF9B51 (= accent-500). Text/icons on orange fills use navy (white fails contrast);
+     orange text on white uses accent-700. */
+  --color-accent-50: #fff4ec;
+  --color-accent-100: #ffe6d3;
+  --color-accent-300: #ffc497;
+  --color-accent-500: #ff9b51;
+  --color-accent-600: #f0802e;
+  --color-accent-700: #a8561a;
+
+  --color-income: #15803d;
+  --color-income-soft: #dcfce7;
+  --color-expense: #b91c1c;
+  --color-expense-soft: #fee2e2;
+
+  --color-ink-900: #0f172a;
+  --color-ink-500: #64748b;
+
+  /* Total cards (TotalsCard): a dark gradient, the currency in the accent, muted secondary text. */
+  /* One flat slate, the same as the dashboard wealth card (brand-600). */
+  --color-hero-start: #334155;
+  --color-hero-end: #334155;
+  --color-hero-accent: #ff9b51;
+  --color-hero-muted: #cbd5e1;
+
+  /* Currency labels beside amounts on light surfaces (see Money); a step darker than the
+     accent so the orange stays readable on white. */
+  --color-currency: #f0802e;
+
+  /* Elevation comes from per-theme variables (set below) instead of fixed values, so it can
+     switch at runtime; colored shadows (e.g. shadow-brand-600/30) still apply. */
+  --shadow-sm: var(--theme-shadow-sm);
+  --shadow-lg: var(--theme-shadow-lg);
+  --shadow-2xl: var(--theme-shadow-2xl);
+}
+
+html[lang="ar"] {
+  --font-sans: "Cairo", "Inter", "Segoe UI", sans-serif;
+}
+
+/* Set on every element so var(--tw-shadow-color) resolves against that element's own
+   shadow color utility. Mali: Tailwind's default shadows. */
+*,
+::before,
+::after {
+  --theme-shadow-sm: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
+    0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+  --theme-shadow-lg: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
+    0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+  --theme-shadow-2xl: 0 25px 50px -12px var(--tw-shadow-color, rgb(0 0 0 / 0.25));
+}
+
+/* Under the total cards: a soft, light shadow (emerald keeps its deeper one below). */
+:root {
+  --hero-shadow: 0 4px 6px -1px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.1);
+}
+
+/* ---------- Emerald theme ---------- */
+[data-theme="emerald"] {
+  --hero-shadow: 0 20px 40px -8px rgb(15 23 42 / 0.18), 0 4px 12px -2px rgb(15 23 42 / 0.08);
+  --font-sans: "Plus Jakarta Sans", "Cairo", "Segoe UI", sans-serif;
+
+  /* Primary brand: emerald green #059669 (= brand-600) for buttons, active states and links;
+     hover #047857 (= brand-700). brand-500 is the focus color. */
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
+
+  --color-navy: #1e2a38;
+
+  /* Accent: dynamic indigo #4F46E5 (= accent-500) for focal points, tags and progress. */
+  --color-accent-50: #eef2ff;
+  --color-accent-100: #e0e7ff;
+  --color-accent-300: #a5b4fc;
+  --color-accent-500: #4f46e5;
+  --color-accent-600: #4338ca;
+  --color-accent-700: #3730a3;
+
+  /* Financial status: emerald for income, red for expenses. */
+  --color-income: #059669;
+  --color-income-soft: #ecfdf5;
+  --color-expense: #dc2626;
+  --color-expense-soft: #fef2f2;
+
+  --color-hero-start: #1e2a38;
+  --color-hero-end: #151f2b;
+  --color-hero-accent: #34d399;
+  --color-hero-muted: #94a3b8;
+
+  --color-currency: #059669;
+}
+
+html[lang="ar"][data-theme="emerald"] {
+  --font-sans: "Cairo", "Plus Jakarta Sans", "Segoe UI", sans-serif;
+}
+
+/* Elevation, tinted with deep slate navy: cards (sm), menus (lg), modals and sheets (2xl). */
+[data-theme="emerald"],
+[data-theme="emerald"] *,
+[data-theme="emerald"] ::before,
+[data-theme="emerald"] ::after {
+  --theme-shadow-sm: 0 4px 20px -2px var(--tw-shadow-color, rgb(15 23 42 / 0.06)),
+    0 1px 2px var(--tw-shadow-color, rgb(15 23 42 / 0.04));
+  --theme-shadow-lg: 0 8px 24px -4px var(--tw-shadow-color, rgb(15 23 42 / 0.12)),
+    0 2px 6px -1px var(--tw-shadow-color, rgb(15 23 42 / 0.06));
+  --theme-shadow-2xl: 0 20px 40px -8px var(--tw-shadow-color, rgb(15 23 42 / 0.18)),
+    0 4px 12px -2px var(--tw-shadow-color, rgb(15 23 42 / 0.08));
+}
+
+@layer utilities {
+  /* Mali cards and modals carry a slate shadow tint; emerald uses the plain navy-tinted shadow. */
+  [data-theme="emerald"] .shadow-slate-200,
+  [data-theme="emerald"] .shadow-slate-200\/60,
+  [data-theme="emerald"] .shadow-slate-900\/10 {
+    --tw-shadow-color: initial;
+  }
+}
+
+/* Cards: a soft resting shadow that lifts them off the page (card-shadow, for panels), plus a
+   small rise on hover for item cards in a grid (card-hover). The ring variables are kept in the
+   stack so cards drawn with a ring-1 border keep it. */
+@utility card-shadow {
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+    0 1px 2px 0 rgb(15 23 42 / 0.04), 0 2px 8px -2px rgb(15 23 42 / 0.06);
+}
+
+@utility card-hover {
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+    0 1px 2px 0 rgb(15 23 42 / 0.04), 0 2px 8px -2px rgb(15 23 42 / 0.06);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    /* A card can pick its own hover border, e.g. an overdue debt stays red. */
+    border-color: var(--card-hover-border, var(--color-slate-300));
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+      0 12px 28px -12px rgb(15 23 42 / 0.2), 0 2px 6px -2px rgb(15 23 42 / 0.06);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/* Selected text: a soft wash of the Mali orange (emerald has its own below). */
+::selection {
+  background: var(--color-accent-100);
+  color: var(--color-slate-900);
+}
+
+/* Thin, quiet scrollbars for the page, lists and panels. Horizontal strips that hide their
+   scrollbar (.no-scrollbar, overflow-x-auto) keep doing so: a class beats this rule. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-slate-300) transparent;
+}
+
+[data-theme="emerald"] ::selection {
+  background: var(--color-brand-100);
+  color: var(--color-ink-900);
+}
+
+/* Checkboxes and radios take the theme's brand color (slate in Mali, emerald in emerald). */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-brand-600);
+}
+/* ---------- end emerald theme ---------- */
+
+body {
+  margin: 0;
+  color: var(--color-ink-900);
+  background: var(--color-slate-50);
+  font-family: var(--font-sans);
+}
+
+/* Financial amounts: fixed-width digits, isolated so the number + currency label keep their
+   order next to surrounding text. Digits follow the UI language (see utils/formatAmount). */
+.tabular-amount {
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+}
+
+/* Language switch: a soft cross-fade of the whole page (View Transitions API). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Toast: slides down into view; the bar underneath shrinks until it closes. */
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.97);
+  }
+}
+
+.toast-enter {
+  animation: toast-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes toast-progress {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.toast-progress {
+  transform-origin: left;
+  animation: toast-progress linear forwards;
+}
+
+[dir="rtl"] .toast-progress {
+  transform-origin: right;
+}
+
+/* Sideways scrolling strips (tab bars, chips...) still scroll with wheel, touch and keyboard,
+   but never show a scrollbar. Applies to every overflow-x-auto/scroll, plus .no-scrollbar. */
+.no-scrollbar,
+.overflow-x-auto,
+.overflow-x-scroll {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-x-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* The page itself never scrolls sideways on small screens; vertical scrolling is untouched.
+   (clip, unlike hidden, keeps sticky headers working.) */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Notification bell: a short swing when there is something new. */
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(8deg); }
+  60% { transform: rotate(-5deg); }
+  75% { transform: rotate(2deg); }
+}
+
+/* Chat background: faint dots on a soft grey, easy on the eyes. */
+.chat-wallpaper {
+  background-color: #f4f6f8;
+  background-image: radial-gradient(rgb(15 23 42 / 0.05) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Password fields have their own show/hide eye (PasswordField); hide the one Edge/IE adds. */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Page enter: a quick fade of the page; the cards inside then reveal one by one. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+.page-enter {
+  animation: page-enter 0.3s ease-out backwards;
+}
+
+/* Cards: hidden until they scroll into view (see useRevealCards), then fade + rise. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+/* Rows and items inside a card rise less than the card itself. */
+.reveal.reveal-sm {
+  transform: translateY(10px);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.55s ease-out,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/*
+  Dashboard sections (ScrollReveal): hidden until scrolled into view, then rise in; inside, the
+  marked items follow one after another and bars fill from zero. Animations (not transitions)
+  for the inner parts, so their own hover transitions are untouched once they have played.
+*/
+.scroll-reveal {
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.scroll-reveal.is-waiting {
+  opacity: 0;
+  transform: translateY(36px) scale(0.98);
+}
+
+@keyframes reveal-item {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes reveal-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.scroll-reveal.is-shown [data-reveal-stagger] > * {
+  animation: reveal-item 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--reveal-delay, 0ms) + 180ms + var(--reveal-step, 0) * 70ms);
+}
+
+.scroll-reveal [data-reveal-stagger] > :nth-child(2) { --reveal-step: 1; }
+.scroll-reveal [data-reveal-stagger] > :nth-child(3) { --reveal-step: 2; }
+.scroll-reveal [data-reveal-stagger] > :nth-child(4) { --reveal-step: 3; }
+.scroll-reveal [data-reveal-stagger] > :nth-child(5) { --reveal-step: 4; }
+.scroll-reveal [data-reveal-stagger] > :nth-child(6) { --reveal-step: 5; }
+.scroll-reveal [data-reveal-stagger] > :nth-child(n + 7) { --reveal-step: 6; }
+
+/* Bars grow from their start side (right in Arabic, left in English). */
+.scroll-reveal.is-shown [data-reveal-bar] {
+  transform-origin: right;
+  animation: reveal-bar 1s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--reveal-delay, 0ms) + 300ms);
+}
+
+[dir="ltr"] .scroll-reveal.is-shown [data-reveal-bar] {
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+
+  .scroll-reveal.is-waiting {
+    opacity: 1;
+    transform: none;
+  }
+
+  .scroll-reveal.is-shown [data-reveal-stagger] > *,
+  .scroll-reveal.is-shown [data-reveal-bar] {
+    animation: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  .toast-enter {
+    animation: none;
+  }
+
+}
+
+/* Loading indicators: the spinner only rotates; skeletons shimmer softly. */
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-slate-200);
+  border-radius: 0.5rem;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+html[dir="rtl"] .skeleton::after {
+  transform: translateX(100%);
+  animation-name: skeleton-shimmer-rtl;
+}
+
+@keyframes skeleton-shimmer-rtl {
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@layer base {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="hidden"]):not([data-select-proxy]),
+  select {
+    min-height: 2.75rem;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    min-height: 5.5rem;
+    box-sizing: border-box;
+  }
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  /* Just the field's own border, darkened — no outline or halo around it. */
+  outline: none;
+  border-color: var(--color-brand-600);
+}
+
+/* Emerald: a soft glow around the field instead of an offset outline. */
+[data-theme="emerald"] input:focus-visible,
+[data-theme="emerald"] select:focus-visible,
+[data-theme="emerald"] textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-brand-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-500) 15%, transparent);
+}
+
+form button[type="submit"] {
+  min-height: 2.75rem;
+}
+
+/* Custom select arrow, shifted in from the edge instead of flush against it. */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.1rem center;
+  background-size: 16px;
+  padding-inline-end: 2.75rem;
+}
+
+html[dir="rtl"] select {
+  background-position: left 1.1rem center;
+}
+
+/* Keyboard users always get a visible focus indicator on interactive controls. */
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+button:not(:disabled),
+[role="button"] {
+  cursor: pointer;
+}
+
+/* Charts: Recharts makes the chart and its slices/bars focusable, so a click left the browser's
+   focus box around them. Keyboard users still get the hovered mark and its tooltip. */
+/* Charts on RTL pages: SVG text inherits direction:rtl, which flips text-anchor, so the value
+   axis labels ("٤٥ ألف") were drawn into the plot instead of beside it. Axis ticks read LTR. */
+.recharts-cartesian-axis-tick-value {
+  direction: ltr;
+}
+
+.recharts-wrapper:focus,
+.recharts-wrapper :focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
